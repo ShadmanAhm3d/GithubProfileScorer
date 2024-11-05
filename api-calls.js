@@ -1,9 +1,8 @@
+// api-calls.js
 
 export async function getUserInformation() {
   const res = await fetch("https://api.github.com/users/ShadmanAhm3d");
   const data = await res.json();
-
-  //another request for /search/q?:author
 
   const commitData = await fetch(
     `https://api.github.com/search/commits?q=author:shadmanAhm3d`,
@@ -15,17 +14,18 @@ export async function getUserInformation() {
   );
   const parsedCD = await commitData.json();
 
-
   const TotalStarsAndForksCall = await fetch(
     "https://api.github.com/users/shadmanAhm3d/repos?per_page=100"
   );
   const TotalStarsAndForksResult = await TotalStarsAndForksCall.json();
   const [countOfStars, countOfForks] = processData(TotalStarsAndForksResult);
+  console.log("From GEt")
 
-  CompelteJob(data, parsedCD, countOfStars, countOfForks);
+  // Return all the data so CompleteJob can be called with it
+  return { data, parsedCD, countOfStars, countOfForks };
 }
 
- function processData(theArray) {
+function processData(theArray) {
   const total = theArray.reduce(
     (acc, repo) => {
       return {
@@ -33,8 +33,12 @@ export async function getUserInformation() {
         fo: acc.fo + repo.forks_count,
       };
     },
-    { st: 0, fo: 0 } // Initial accumulator with `st` and `fo` keys
+    { st: 0, fo: 0 }
   );
+  console.log("From PD");
 
   return [total.st, total.fo];
+  
+  
 }
+
